@@ -1,12 +1,7 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-import 'dart:typed_data';
+
 import 'package:butler_labs/models/butler_result.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() {
@@ -58,56 +53,7 @@ class _HomeState extends State<Home> {
                     image.value = pickedImage;
                     debugPrint('pickedImage: ' + pickedImage.path);
 
-                    // https://docs.butlerlabs.ai/reference/extract-document
-                    String butlerApiKey = const String.fromEnvironment('BUTLER_API_KEY');
-                    String queueId = const String.fromEnvironment('QUEUE_ID');
 
-                    MultipartRequest request = MultipartRequest('POST', Uri.parse('https://app.butlerlabs.ai/api/queues/$queueId/documents'));
-
-                    request.headers.addAll({
-                      HttpHeaders.acceptHeader: '*/*',
-                      HttpHeaders.authorizationHeader: 'Bearer $butlerApiKey',
-                      HttpHeaders.contentTypeHeader: 'multipart/form-data',
-                    });
-
-                    if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
-                      request.files.add(
-                        await MultipartFile.fromPath(
-                          'file',
-                          pickedImage.path,
-                          contentType: MediaType('image', 'jpeg'),
-                        ),
-                      );
-                    } else {
-                      Uint8List bytes = await pickedImage.readAsBytes();
-
-                      MultipartFile file = MultipartFile(
-                        'file',
-                        ByteStream.fromBytes(bytes),
-                        bytes.lengthInBytes,
-                        filename: pickedImage.path
-                            .split('/')
-                            .last,
-                        contentType: MediaType('image', 'jpeg'),
-                      );
-
-                      request.files.add(file);
-                    }
-
-                    StreamedResponse response = await request.send();
-
-                    debugPrint('Response: ${response.statusCode}');
-                    debugPrint('Response: ${response.reasonPhrase}');
-                    debugPrint('Response: ${response.contentLength}');
-                    debugPrint('Response: ${response.request}');
-                    debugPrint('Response: ${response.stream}');
-                    debugPrint('Response: ${response.toString()}');
-
-                    response.stream.transform(utf8.decoder).listen((value) {
-                      ButlerResult butlerResult = ButlerResult.fromJson(jsonDecode(value));
-                      result.value = butlerResult;
-                      debugPrint('Response stream: $value');
-                    });
                   },
                   child: const Text('Upload Image'),
                 ),
