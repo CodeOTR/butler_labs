@@ -10,9 +10,9 @@ class ButlerField {
 
   final String? confidenceScore;
 
-  final double confidenceValue;
+  final double? confidenceValue;
 
-  final double ocrConfidenceValue;
+  final double? ocrConfidenceValue;
 
   ButlerField({
     required this.fieldName,

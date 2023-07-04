@@ -1,5 +1,7 @@
 library butler_labs;
 
+import 'dart:developer';
+
 import 'package:butler_labs/models/butler_result.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
@@ -12,10 +14,15 @@ class ButlerLabs {
 
   ButlerLabs(this.apiKey);
 
-  Future<ButlerResult?> performOcrOnImageFile(String path) async {
-    // https://docs.butlerlabs.ai/reference/extract-document
-    String butlerApiKey = const String.fromEnvironment('BUTLER_API_KEY');
-    String queueId = const String.fromEnvironment('QUEUE_ID');
+  String get butlerApiKey => const String.fromEnvironment('BUTLER_API_KEY');
+
+  /// Performs OCR on an image file and returns a [ButlerResult] object
+  /// Note that images selected on web will not have a file path, so you should use [performOcrOnImageBytes] instead
+  /// https://docs.butlerlabs.ai/reference/extract-document
+  Future<ButlerResult?> performOcrOnImageFile({
+    required String imagePath,
+    required String queueId,
+  }) async {
 
     MultipartRequest request = MultipartRequest('POST', Uri.parse('https://app.butlerlabs.ai/api/queues/$queueId/documents'));
 
@@ -31,7 +38,7 @@ class ButlerLabs {
       request.files.add(
         await MultipartFile.fromPath(
           'file',
-          path,
+          imagePath,
           contentType: MediaType('image', 'jpeg'),
         ),
       );
@@ -41,13 +48,6 @@ class ButlerLabs {
 
     StreamedResponse response = await request.send();
 
-    debugPrint('Response: ${response.statusCode}');
-    debugPrint('Response: ${response.reasonPhrase}');
-    debugPrint('Response: ${response.contentLength}');
-    debugPrint('Response: ${response.request}');
-    debugPrint('Response: ${response.stream}');
-    debugPrint('Response: ${response.toString()}');
-
     String value = await response.stream.transform(utf8.decoder).join();
     result = ButlerResult.fromJson(jsonDecode(value));
     debugPrint('Response stream: $value');
@@ -55,10 +55,13 @@ class ButlerLabs {
     return result;
   }
 
-  Future<ButlerResult?> performOcrOnImageBytes(Uint8List bytes) async {
-    // https://docs.butlerlabs.ai/reference/extract-document
-    String butlerApiKey = const String.fromEnvironment('BUTLER_API_KEY');
-    String queueId = const String.fromEnvironment('QUEUE_ID');
+  /// Performs OCR on an image and returns a [ButlerResult] object
+  /// This method will work on all platforms
+  /// https://docs.butlerlabs.ai/reference/extract-document
+  Future<ButlerResult?> performOcrOnImageBytes({
+    required Uint8List imageBytes,
+    required String queueId,
+  }) async {
 
     MultipartRequest request = MultipartRequest('POST', Uri.parse('https://app.butlerlabs.ai/api/queues/$queueId/documents'));
 
@@ -72,8 +75,8 @@ class ButlerLabs {
 
     MultipartFile file = MultipartFile(
       'file',
-      ByteStream.fromBytes(bytes),
-      bytes.lengthInBytes,
+      ByteStream.fromBytes(imageBytes),
+      imageBytes.lengthInBytes,
       filename: 'temp.jpg',
       contentType: MediaType('image', 'jpeg'),
     );
@@ -82,16 +85,9 @@ class ButlerLabs {
 
     StreamedResponse response = await request.send();
 
-    debugPrint('Response: ${response.statusCode}');
-    debugPrint('Response: ${response.reasonPhrase}');
-    debugPrint('Response: ${response.contentLength}');
-    debugPrint('Response: ${response.request}');
-    debugPrint('Response: ${response.stream}');
-    debugPrint('Response: ${response.toString()}');
-
     String value = await response.stream.transform(utf8.decoder).join();
     result = ButlerResult.fromJson(jsonDecode(value));
-    debugPrint('Response stream: $value');
+    log('Response stream: $value');
 
     return result;
   }
