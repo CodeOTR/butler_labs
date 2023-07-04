@@ -71,6 +71,9 @@ class _HomeState extends State<Home> {
                         title: Text('Document ID: ${val.documentId}'),
                       ),
                       ListTile(
+                        title: Text('Upload ID: ${val.uploadId}'),
+                      ),
+                      ListTile(
                         title: Text('Document Status: ${val.documentStatus}'),
                       ),
                       ListTile(

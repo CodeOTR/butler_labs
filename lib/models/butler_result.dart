@@ -9,6 +9,9 @@ part 'butler_result.g.dart';
 class ButlerResult {
   String? documentId;
 
+  /// The uploadId is used to delete the document and results after if needed.
+  String? uploadId;
+
   String? documentStatus;
 
   String? fileName;
@@ -25,6 +28,10 @@ class ButlerResult {
 
   ButlerResult();
 
+  String? getField(String fieldName) {
+    return formFields?.firstWhereOrNull((element) => element.fieldName == fieldName)?.value;
+  }
+
   ButlerResult.fromButlerResult(ButlerResult result);
 
   factory ButlerResult.fromJson(Map<String, dynamic> json) => _$ButlerResultFromJson(json);
@@ -34,120 +41,49 @@ class ButlerResult {
 
 /// https://docs.butlerlabs.ai/reference/health-insurance-card-ocr
 @JsonSerializable(explicitToJson: true)
-class InsuranceCard implements ButlerResult {
-
-  @override
-  String? confidenceScore;
-
-  @override
-  String? documentId;
-
-  @override
-  String? documentStatus;
-
-  @override
-  String? documentType;
-
-  @override
-  String? fileName;
-
-  @override
-  List<ButlerField>? formFields;
-
-  @override
-  String? mimeType;
-
-  @override
-  List<ButlerTable>? tables;
-
+class InsuranceCard extends ButlerResult {
   InsuranceCard();
 
-  String? get memberName {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'Member Name')?.value;
-  }
+  String? get memberName => getField('Member Name');
 
-  String? get idNumber {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'ID Number')?.value;
-  }
+  String? get idNumber => getField('ID Number');
 
-  String? get groupNumber {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'Group Number')?.value;
-  }
+  String? get groupNumber => getField('Group Number');
 
-  String? get insurer {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'Insurer')?.value;
-  }
+  String? get insurer => getField('Insurer');
 
-  @override
   factory InsuranceCard.fromButlerResult(ButlerResult result) => InsuranceCard.fromJson(result.toJson());
 
-  @override
   factory InsuranceCard.fromJson(Map<String, dynamic> json) => _$InsuranceCardFromJson(json);
 
-  @override
   Map<String, dynamic> toJson() => _$InsuranceCardToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
-class DriversLicense implements ButlerResult {
-
-  @override
-  String? confidenceScore;
-
-  @override
-  String? documentId;
-
-  @override
-  String? documentStatus;
-
-  @override
-  String? documentType;
-
-  @override
-  String? fileName;
-
-  @override
-  List<ButlerField>? formFields;
-
-  @override
-  String? mimeType;
-
-  @override
-  List<ButlerTable>? tables;
-
+class DriversLicense extends ButlerResult {
   DriversLicense();
 
-  String? get firstName {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'First Name')?.value;
-  }
+  /// Given name and middle name if applicable
+  String? get firstName => getField('First Name');
 
-  String? get lastName {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'Last Name')?.value;
-  }
+  /// Surname
+  String? get lastName => getField('Last Name');
 
-  String? get region {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'Region')?.value;
-  }
+  /// State that issued the driver's license
+  String? get region => getField('Region');
 
-  String? get documentNumber {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'Document Number')?.value;
-  }
+  /// Driver's license number
+  String? get documentNumber => getField('Document Number');
 
-  String? get vehicleClassification {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'Vehicle Classification')?.value;
-  }
+  /// Class of vehicles the driver is allowed to operate
+  String? get vehicleClassification => getField('Vehicle Classification');
 
-  String? get expirationDate {
-    return formFields?.firstWhereOrNull((element) => element.fieldName == 'Expiration Date')?.value;
-  }
+  /// Date of expiry of the license
+  String? get expirationDate => getField('Expiration Date');
 
-  @override
+  factory DriversLicense.fromButlerResult(ButlerResult result) => DriversLicense.fromJson(result.toJson());
+
   factory DriversLicense.fromJson(Map<String, dynamic> json) => _$DriversLicenseFromJson(json);
 
-  @override
   Map<String, dynamic> toJson() => _$DriversLicenseToJson(this);
-}
-
-class Test extends ButlerResult{
-
 }

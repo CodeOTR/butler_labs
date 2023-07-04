@@ -12,6 +12,8 @@ import 'dart:io';
 class ButlerLabs {
   final String apiKey;
 
+  static String baseUrl = 'https://app.butlerlabs.ai/api';
+
   ButlerLabs(this.apiKey);
 
   String get butlerApiKey => const String.fromEnvironment('BUTLER_API_KEY');
@@ -24,15 +26,7 @@ class ButlerLabs {
     required String queueId,
   }) async {
 
-    MultipartRequest request = MultipartRequest('POST', Uri.parse('https://app.butlerlabs.ai/api/queues/$queueId/documents'));
-
-    ButlerResult? result;
-
-    request.headers.addAll({
-      HttpHeaders.acceptHeader: '*/*',
-      HttpHeaders.authorizationHeader: 'Bearer $butlerApiKey',
-      HttpHeaders.contentTypeHeader: 'multipart/form-data',
-    });
+    MultipartRequest request = createButlerRequest(queueId: queueId);
 
     if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
       request.files.add(
@@ -48,6 +42,7 @@ class ButlerLabs {
 
     StreamedResponse response = await request.send();
 
+    ButlerResult? result;
     String value = await response.stream.transform(utf8.decoder).join();
     result = ButlerResult.fromJson(jsonDecode(value));
     debugPrint('Response stream: $value');
@@ -63,15 +58,7 @@ class ButlerLabs {
     required String queueId,
   }) async {
 
-    MultipartRequest request = MultipartRequest('POST', Uri.parse('https://app.butlerlabs.ai/api/queues/$queueId/documents'));
-
-    ButlerResult? result;
-
-    request.headers.addAll({
-      HttpHeaders.acceptHeader: '*/*',
-      HttpHeaders.authorizationHeader: 'Bearer $butlerApiKey',
-      HttpHeaders.contentTypeHeader: 'multipart/form-data',
-    });
+    MultipartRequest request = createButlerRequest(queueId: queueId);
 
     MultipartFile file = MultipartFile(
       'file',
@@ -85,10 +72,24 @@ class ButlerLabs {
 
     StreamedResponse response = await request.send();
 
+    ButlerResult? result;
     String value = await response.stream.transform(utf8.decoder).join();
     result = ButlerResult.fromJson(jsonDecode(value));
     log('Response stream: $value');
 
     return result;
   }
+
+  MultipartRequest createButlerRequest({ required String queueId}) {
+    MultipartRequest request = MultipartRequest('POST', Uri.parse('$baseUrl/queues/$queueId/documents'));
+
+    request.headers.addAll({
+      HttpHeaders.acceptHeader: '*/*',
+      HttpHeaders.authorizationHeader: 'Bearer $butlerApiKey',
+      HttpHeaders.contentTypeHeader: 'multipart/form-data',
+    });
+
+    return request;
+  }
 }
+
