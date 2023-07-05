@@ -25,7 +25,7 @@ class ButlerLabs {
     required String imagePath,
     required String queueId,
   }) async {
-    MultipartRequest request = createButlerRequest(queueId: queueId);
+    MultipartRequest request = createMultipartButlerRequest(endpoint: '$baseUrl/queues/$queueId/documents');
 
     if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
       request.files.add(
@@ -56,7 +56,7 @@ class ButlerLabs {
     required Uint8List imageBytes,
     required String queueId,
   }) async {
-    MultipartRequest request = createButlerRequest(queueId: queueId);
+    MultipartRequest request = createMultipartButlerRequest(endpoint: '$baseUrl/queues/$queueId/documents');
 
     MultipartFile file = MultipartFile(
       'file',
@@ -82,11 +82,11 @@ class ButlerLabs {
   /// This result from this method is meant to be used with the .fromJson() constructor
   /// on the specific model you are using (ex. DriversLicense, Passport, etc.)
   /// https://docs.butlerlabs.ai/reference/extract-document
-  Future<Map<String, dynamic>?> performOcrOnImage({
+  Future<Map<String, dynamic>?> extract({
     required Uint8List imageBytes,
     required String queueId,
   }) async {
-    MultipartRequest request = createButlerRequest(queueId: queueId);
+    MultipartRequest request = createMultipartButlerRequest(endpoint: '$baseUrl/queues/$queueId/documents');
 
     MultipartFile file = MultipartFile(
       'file',
@@ -108,8 +108,71 @@ class ButlerLabs {
     return result;
   }
 
-  MultipartRequest createButlerRequest({required String queueId}) {
-    MultipartRequest request = MultipartRequest('POST', Uri.parse('$baseUrl/queues/$queueId/documents'));
+  /// https://docs.butlerlabs.ai/reference/get-enhanced-extraction-results
+  Future<Map<String, dynamic>?> enhancedExtract({
+    required String modelId,
+    required String documentId,
+  }) async {
+    Request request = createButlerRequest(
+      endpoint: '$baseUrl/models/$modelId/documents/$documentId/enhanced_results',
+      method: 'GET',
+    );
+
+    StreamedResponse response = await request.send();
+
+    Map<String, dynamic>? result;
+    String value = await response.stream.transform(utf8.decoder).join();
+    result = jsonDecode(value);
+    log('Response stream: $value');
+
+    return result;
+  }
+
+  /// Upload files for processing
+  /// https://docs.butlerlabs.ai/reference/upload-documents-queues
+  Future<void> uploadDocument({
+    required Uint8List documentBytes,
+    required String queueId,
+  }) async {
+    MultipartRequest request = createMultipartButlerRequest(endpoint: '$baseUrl/queues/$queueId/uploads');
+
+    MultipartFile file = MultipartFile(
+      'file',
+      ByteStream.fromBytes(documentBytes),
+      documentBytes.lengthInBytes,
+      filename: 'temp.jpg',
+      contentType: MediaType('image', 'jpeg'),
+    );
+
+    request.files.add(file);
+
+    StreamedResponse response = await request.send();
+
+    Map<String, dynamic>? result;
+    String value = await response.stream.transform(utf8.decoder).join();
+    result = jsonDecode(value);
+    log('Response stream: $value');
+  }
+
+  Request createButlerRequest({
+    required String endpoint,
+    String method = 'POST',
+  }) {
+    Request request = Request(method, Uri.parse(endpoint));
+
+    request.headers.addAll({
+      HttpHeaders.acceptHeader: '*/*',
+      HttpHeaders.authorizationHeader: 'Bearer $butlerApiKey',
+    });
+
+    return request;
+  }
+
+  MultipartRequest createMultipartButlerRequest({
+    required String endpoint,
+    String method = 'POST',
+  }) {
+    MultipartRequest request = MultipartRequest(method, Uri.parse(endpoint));
 
     request.headers.addAll({
       HttpHeaders.acceptHeader: '*/*',

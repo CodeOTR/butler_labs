@@ -41,7 +41,7 @@ class _InsuranceCardSampleState extends State<InsuranceCardSample> {
                       // You can use the ButlerResult class
                       ButlerResult? output = await ButlerLabs(const String.fromEnvironment('BUTLER_API_KEY')).performOcrOnImageBytes(
                         imageBytes: imageBytes,
-                        queueId: Model.driversLicense.id,
+                        queueId: Model.driversLicense.queueId,
                       );
 
                       if (output != null) {

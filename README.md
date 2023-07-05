@@ -11,7 +11,9 @@
 ✅ [W9](https://docs.butlerlabs.ai/reference/w9-ocr)
 ✅ [Mortgage](https://docs.butlerlabs.ai/reference/mortgage-ocr)
 ✅ [Health Insurance Card](https://docs.butlerlabs.ai/reference/health-insurance-card-ocr)
-🔲 [Paystub](https://docs.butlerlabs.ai/reference/paystub-ocr)
+✅ [Paystub](https://docs.butlerlabs.ai/reference/paystub-ocr)
+
+> Tables are not supported yet
 
 ## Supported Endpoints
 ✅ [Extract Document](https://docs.butlerlabs.ai/reference/extract-document)

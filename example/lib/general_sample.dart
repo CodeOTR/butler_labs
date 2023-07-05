@@ -5,14 +5,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class LicenseSample extends StatefulWidget {
-  const LicenseSample({Key? key}) : super(key: key);
+class GeneralSample extends StatefulWidget {
+  const GeneralSample({Key? key}) : super(key: key);
 
   @override
-  State<LicenseSample> createState() => _HomeState();
+  State<GeneralSample> createState() => _HomeState();
 }
 
-class _HomeState extends State<LicenseSample> {
+class _HomeState extends State<GeneralSample> {
   ValueNotifier<XFile?> image = ValueNotifier<XFile?>(null);
   ValueNotifier<ButlerResult?> result = ValueNotifier<ButlerResult?>(null);
 
@@ -41,7 +41,7 @@ class _HomeState extends State<LicenseSample> {
                         Uint8List imageBytes = await pickedImage.readAsBytes();
                         ButlerResult? output = await ButlerLabs(const String.fromEnvironment('BUTLER_API_KEY')).performOcrOnImageBytes(
                           imageBytes: imageBytes,
-                          queueId: Model.driversLicense.id,
+                          queueId: Model.driversLicense.queueId,
                         );
 
                         result.value = output;
@@ -61,7 +61,7 @@ class _HomeState extends State<LicenseSample> {
 
                         ButlerResult? output = await ButlerLabs(const String.fromEnvironment('BUTLER_API_KEY')).performOcrOnImageFile(
                           imagePath: pickedImage.path,
-                          queueId: Model.driversLicense.id,
+                          queueId: Model.driversLicense.queueId,
                         );
 
                         result.value = output;
@@ -71,10 +71,10 @@ class _HomeState extends State<LicenseSample> {
                     ),
                     if (val != null) ...[
                       ListTile(
-                        title: Text('Document ID: ${val.documentId}'),
+                        title: SelectableText('Document ID: ${val.documentId}'),
                       ),
                       ListTile(
-                        title: Text('Upload ID: ${val.uploadId}'),
+                        title: SelectableText('Upload ID: ${val.uploadId}'),
                       ),
                       ListTile(
                         title: Text('Document Status: ${val.documentStatus}'),

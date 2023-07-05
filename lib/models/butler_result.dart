@@ -270,6 +270,74 @@ class Passport extends ButlerResult {
   Map<String, dynamic> toJson() => _$PassportToJson(this);
 }
 
+/// https://docs.butlerlabs.ai/reference/paystub-ocr
+@JsonSerializable(explicitToJson: true)
+class Paystub extends ButlerResult {
+  Paystub();
+
+  /// Employee Address for this Paystub
+  String? get employeeAddress => getField('Employee Address');
+
+  /// Employee Name for this Paystub
+  String? get employeeName => getField('Employee Name');
+
+  /// Employer Address for this Paystub
+  String? get employerAddress => getField('Employer Address');
+
+  /// Employer Name for this Paystub
+  String? get employerName => getField('Employer Name');
+
+  /// The start date of the statement period for this Paystub
+  String? get startDate => getField('Start Date');
+
+  /// The end date of the statement period for this Paystub
+  String? get endDate => getField('End Date');
+
+  /// The Gross Earnings for this Paystub
+  String? get grossEarnings => getField('Gross Earnings');
+
+  /// The Gross Earnings Year-to-date for this Paystub
+  String? get grossEarningsYTD => getField('Gross Earnings YTD');
+
+  /// The Net Pay for this Paystub
+  String? get netPay => getField('Net Pay');
+
+  /// The Net Pay Year-to-date for this Paystub
+  String? get netPayYTD => getField('Net Pay YTD');
+
+  /// The Pay date for this Paystub
+  String? get payDate => getField('Pay Date');
+
+  /// The Social Security Number of the employee this Paystub is for
+  String? get ssn => getField('SSN');
+
+  /// Additional Federal Tax paid for this Paystub
+  String? get federalAdditionalTax => getField('Federal Additional Tax');
+
+  /// The Federal Allowance for this Paystub
+  String? get federalAllowance => getField('Federal Allowance');
+
+  /// The Federal Marital Status for the employee this Paystub is for
+  String? get federalMaritalStatus => getField('Federal Marital Status');
+
+  /// Additional State Tax paid for this Paystub
+  String? get stateAdditionalTax => getField('State Additional Tax');
+
+  /// The State Allowance for this Paystub
+  String? get stateAllowance => getField('State Allowance');
+
+  /// The State Marital Status for the employee this Paystub is for
+  String? get stateMaritalStatus => getField('State Marital Status');
+
+  // todo add tables
+
+  factory Paystub.fromButlerResult(ButlerResult result) => Paystub.fromJson(result.toJson());
+
+  factory Paystub.fromJson(Map<String, dynamic> json) => _$PaystubFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PaystubToJson(this);
+}
+
 /// https://docs.butlerlabs.ai/reference/mortgage-ocr
 @JsonSerializable(explicitToJson: true)
 class Mortgage extends ButlerResult {
