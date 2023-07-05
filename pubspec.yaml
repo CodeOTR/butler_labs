@@ -1,6 +1,6 @@
 name: butler_labs
 description: A Pure Dart SDK for Butler Labs OCR
-version: 0.0.1
+version: 0.0.3
 homepage: https://codeontherocks.dev/
 
 environment:

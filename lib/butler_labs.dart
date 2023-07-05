@@ -148,9 +148,8 @@ class ButlerLabs {
 
     StreamedResponse response = await request.send();
 
-    Map<String, dynamic>? result;
     String value = await response.stream.transform(utf8.decoder).join();
-    result = jsonDecode(value);
+
     log('Response stream: $value');
   }
 
