@@ -78,6 +78,10 @@ class ButlerLabs {
     return result;
   }
 
+  /// Performs OCR on an image and returns a [Map<String, dynamic>] object
+  /// This result from this method is meant to be used with the .fromJson() constructor
+  /// on the specific model you are using (ex. DriversLicense, Passport, etc.)
+  /// https://docs.butlerlabs.ai/reference/extract-document
   Future<Map<String, dynamic>?> performOcrOnImage({
     required Uint8List imageBytes,
     required String queueId,

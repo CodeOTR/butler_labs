@@ -47,7 +47,7 @@ class _InsuranceCardSampleState extends State<InsuranceCardSample> {
                       if (output != null) {
                         license.value = DriversLicense.fromButlerResult(output);
                       }
-                      
+
                       // Or you can use the map method
                       /*Map<String, dynamic>? output = await ButlerLabs(const String.fromEnvironment('BUTLER_API_KEY')).performOcrOnImage(
                         imageBytes: imageBytes,
