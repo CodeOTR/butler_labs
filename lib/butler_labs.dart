@@ -25,7 +25,6 @@ class ButlerLabs {
     required String imagePath,
     required String queueId,
   }) async {
-
     MultipartRequest request = createButlerRequest(queueId: queueId);
 
     if (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS) {
@@ -57,7 +56,6 @@ class ButlerLabs {
     required Uint8List imageBytes,
     required String queueId,
   }) async {
-
     MultipartRequest request = createButlerRequest(queueId: queueId);
 
     MultipartFile file = MultipartFile(
@@ -80,7 +78,33 @@ class ButlerLabs {
     return result;
   }
 
-  MultipartRequest createButlerRequest({ required String queueId}) {
+  Future<Map<String, dynamic>?> performOcrOnImage({
+    required Uint8List imageBytes,
+    required String queueId,
+  }) async {
+    MultipartRequest request = createButlerRequest(queueId: queueId);
+
+    MultipartFile file = MultipartFile(
+      'file',
+      ByteStream.fromBytes(imageBytes),
+      imageBytes.lengthInBytes,
+      filename: 'temp.jpg',
+      contentType: MediaType('image', 'jpeg'),
+    );
+
+    request.files.add(file);
+
+    StreamedResponse response = await request.send();
+
+    Map<String, dynamic>? result;
+    String value = await response.stream.transform(utf8.decoder).join();
+    result = jsonDecode(value);
+    log('Response stream: $value');
+
+    return result;
+  }
+
+  MultipartRequest createButlerRequest({required String queueId}) {
     MultipartRequest request = MultipartRequest('POST', Uri.parse('$baseUrl/queues/$queueId/documents'));
 
     request.headers.addAll({
@@ -92,4 +116,3 @@ class ButlerLabs {
     return request;
   }
 }
-
